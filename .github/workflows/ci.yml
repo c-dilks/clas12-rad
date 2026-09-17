@@ -60,8 +60,8 @@ jobs:
           path: test_data.hipo
       ### run tests
       - name: MinimalExample.C
-        run: root -l -b -q 'MinimalExample.C("test_data.hipo")'
+        run: root -l -b -q 'examples/MinimalExample.C("test_data.hipo")'
       - name: HistogramAnalysis.C
-        run: root -l -b -q 'HistogramAnalysis.C("test_data.hipo")'
+        run: root -l -b -q 'examples/HistogramAnalysis.C("test_data.hipo")'
       - run: ls -lth
       - run: tree
