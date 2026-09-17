@@ -19,7 +19,7 @@ jobs:
   # download test data
   #############################################################################
 
-    download_test_data:
+  download_test_data:
     name: Download test data
     runs-on: ubuntu-latest # NOTE: using Ubuntu runner, rather than a `container-forge` image, since it's much faster for cache hits
     steps:
@@ -44,7 +44,7 @@ jobs:
   # test
   #############################################################################
 
-  run_histogram:
+  run_examples:
     needs:
       - download_test_data
     runs-on: ubuntu-latest
