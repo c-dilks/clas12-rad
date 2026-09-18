@@ -52,6 +52,9 @@ jobs:
       image: codecr.jlab.org/hallb/clas12/container-forge/base_root:latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+      - run: source .github/ci_env.sh
       ### get test data
       - name: get test data
         uses: actions/cache/restore@v5

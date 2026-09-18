@@ -1,0 +1,3 @@
+echo "CLAS12RAD=$GITHUB_WORKSPACE" | tee -a $GITHUB_ENV
+echo "RAD=$CLAS12RAD/rad" | tee -a $GITHUB_ENV
+echo "ROOT_INCLUDE_PATH=$RAD/include:$CLAS12RAD/include:$ROOT_INCLUDE_PATH" | tee -a $GITHUB_ENV
