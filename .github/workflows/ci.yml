@@ -65,7 +65,18 @@ jobs:
       ### run tests
       - name: MinimalExample.C
         run: root -l -b -q 'examples/MinimalExample.C("test_data.hipo")'
+      - name: FilterAnalysis.C
+        run: root -l -b -q 'examples/FilterAnalysis.C("test_data.hipo")'
       - name: HistogramAnalysis.C
         run: root -l -b -q 'examples/HistogramAnalysis.C("test_data.hipo")'
+      - name: PlotDetectorData.C
+        run: root -l -b -q 'examples/PlotDetectorData.C("test_data.hipo")'
       - run: ls -lth
-      - run: tree
+      - run: tree out_*
+      ### upload artifacts
+      # FIXME: plots would be more useful than ROOT files
+      - uses: actions/upload-artifact@v7
+        with:
+          name: examples_output
+          retention-days: 14
+          path: out_*
