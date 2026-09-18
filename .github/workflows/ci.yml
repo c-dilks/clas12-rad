@@ -49,7 +49,8 @@ jobs:
       - download_test_data
     runs-on: ubuntu-latest
     container:
-      image: codecr.jlab.org/hallb/clas12/container-forge/base_root:latest
+      # image: codecr.jlab.org/hallb/clas12/container-forge/base_root:latest
+      image: codecr.jlab.org/hallb/clas12/container-forge/base_root:MR-318-173
     steps:
       - uses: actions/checkout@v7
         with:
