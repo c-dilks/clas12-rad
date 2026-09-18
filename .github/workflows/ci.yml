@@ -1,0 +1,82 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  # download test data
+  #############################################################################
+
+  download_test_data:
+    name: Download test data
+    runs-on: ubuntu-latest # NOTE: using Ubuntu runner, rather than a `container-forge` image, since it's much faster for cache hits
+    steps:
+      - uses: actions/cache@v5
+        id: cache
+        with:
+          key: test_data_lfs # fixed key will always hit; clear cache to trigger cache miss
+          path: test_data.hipo
+          lookup-only: true
+      - name: download
+        if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+        run: |
+          GIT_LFS_SKIP_SMUDGE=1 git clone https://code.jlab.org/hallb/clas12/validation-data.git
+          cd validation-data
+          git lfs install --skip-smudge
+          git config lfs.fetchinclude "recon/dst/validation_files.tar.zst"
+          git lfs pull
+          cd recon/dst
+          tar xvf validation_files.tar.zst
+          mv -v $(find validation_files -type f -name "*.hipo" | head -n1) $GITHUB_WORKSPACE/test_data.hipo
+
+  # test
+  #############################################################################
+
+  run_examples:
+    needs:
+      - download_test_data
+    runs-on: ubuntu-latest
+    container:
+      # image: codecr.jlab.org/hallb/clas12/container-forge/base_root:latest
+      image: codecr.jlab.org/hallb/clas12/container-forge/base_root:MR-318-173
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+      - run: source .github/ci_env.sh
+      ### get test data
+      - name: get test data
+        uses: actions/cache/restore@v5
+        with:
+          key: test_data_lfs
+          path: test_data.hipo
+      ### run tests
+      - name: MinimalExample.C
+        run: root -l -b -q 'examples/MinimalExample.C("test_data.hipo")'
+      - name: FilterAnalysis.C
+        run: root -l -b -q 'examples/FilterAnalysis.C("test_data.hipo")'
+      - name: HistogramAnalysis.C
+        run: root -l -b -q 'examples/HistogramAnalysis.C("test_data.hipo")'
+      - name: PlotDetectorData.C
+        run: root -l -b -q 'examples/PlotDetectorData.C("test_data.hipo")'
+      - run: ls -lth
+      - run: tree out_*
+      ### upload artifacts
+      # FIXME: plots would be more useful than ROOT files
+      - uses: actions/upload-artifact@v7
+        with:
+          name: examples_output
+          retention-days: 14
+          path: out_*

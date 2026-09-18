@@ -32,10 +32,10 @@ void PlotDetectorData(const std::string& input_file = "my_clas12_data.hipo") {
     // =================================================================================
     // 2. PARTICLE CANDIDATES & COMBINATORICS
     // =================================================================================
-    clas12_df.SetParticleRecPID(ScatEle(),11);
-    clas12_df.SetParticleRecPID("proton", 2212); 
-    clas12_df.SetParticleRecPID("pip",    211);  
-    clas12_df.SetParticleRecPID("pim",   -211); 
+    clas12_df.SetParticlePID(ScatEle(), Rec(), 11);
+    clas12_df.SetParticlePID("proton",  Rec(), 2212);
+    clas12_df.SetParticlePID("pip",     Rec(), 211);
+    clas12_df.SetParticlePID("pim",     Rec(), -211);
 
     clas12_df.MakeCombinations();
 
